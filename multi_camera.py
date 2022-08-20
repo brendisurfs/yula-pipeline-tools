@@ -47,8 +47,8 @@ class CameraHandler:
 
     def set_camera_path(self, path: str):
         # set the path for all the camera outputs.
-        self._render_path = bpy.path.abspath(path)
-        print(Log(LogType.INFO, "camera path set to " + self._render_path))
+        self.__render_path__ = bpy.path.abspath(path)
+        print(Log(LogType.INFO, "camera path set to " + self.__render_path__))
 
     def __get_camera_collection__(self):
         camera_collection = self.scene.collection.children["Cameras"].all_objects
@@ -73,13 +73,13 @@ class CameraHandler:
         for obj in camera_collection:
             formatted_name = self.__format_camera_name__(obj)
 
-            if self._render_path is not None:
+            if self.__render_path__ is not None:
                 # if subdir not found,
                 # make subdir
                 # else, use that subdir.
 
                 render_subdir = (
-                    self._render_path.rstrip("/")
+                    self.__render_path__.rstrip("/")
                     + ("/")
                     + "Previews"
                     + ("/")
@@ -94,13 +94,13 @@ class CameraHandler:
         for obj in camera_collection:
             formatted_name = self.__format_camera_name__(obj)
 
-            if self._render_path is not None:
+            if self.__render_path__ is not None:
                 # if subdir not found,
                 # make subdir
                 # else, use that subdir.
 
                 render_subdir = (
-                    self._render_path.rstrip("/")
+                    self.__render_path__.rstrip("/")
                     + ("/")
                     + "Finals"
                     + ("/")
