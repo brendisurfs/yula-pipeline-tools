@@ -22,17 +22,16 @@ class MULTICAM_PT_layout_panel(bpy.types.Panel):
 
 
 def register():
-    scene_collection = bpy.types.Scene.collection
+    scene_collection = bpy.types.Scene
 
     camera_collection = PointerProperty(
         name="Camera Collection", type=bpy.types.Collection
     )
     scene_collection.camera_collection = camera_collection
-    # bpy.types.Scene.camera_collection = PointerProperty(
-    #     name="Camera Collection", type=bpy.types.Collection
-    # )
 
     bpy.utils.register_class(MULTICAM_PT_layout_panel)
+
+    stored_camera_collection = bpy.context.scene.camera_collection
 
 
 def unregister():
