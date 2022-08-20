@@ -1,10 +1,23 @@
 import typing
 import bpy
 
-from bpy.props import PointerProperty
+from bpy.props import EnumProperty, PointerProperty
 from bpy.types import AnyType, Point
 
 from print_console import print
+
+
+class MultiCam_PT_TemplateOperator(bpy.types.Operator):
+    bl_label: str = "Multicam operator"
+    bl_idname: str = "wm.multicam_operator"
+
+    preset_prop: bpy.props.EnumProperty(
+        name="render fns", description="select an option", items={"preview", "render"}
+    )
+
+    def execute(self, context):
+        print("my preset: ", self.preset_prop)
+        return {"Finished"}
 
 
 class MULTICAM_PT_layout_panel(bpy.types.Panel):
@@ -20,6 +33,10 @@ class MULTICAM_PT_layout_panel(bpy.types.Panel):
         col = layout.column()
         col.prop(scene, "camera_collection")
 
+        # button
+        col = layout.column()
+        col.prop(scene, "multicam_operator_preview")
+
 
 def register():
     scene_collection = bpy.types.Scene
@@ -27,8 +44,8 @@ def register():
     camera_collection = PointerProperty(
         name="Camera Collection", type=bpy.types.Collection
     )
-    scene_collection.camera_collection = camera_collection
 
+    scene_collection.camera_collection = camera_collection
     bpy.utils.register_class(MULTICAM_PT_layout_panel)
 
     stored_camera_collection = bpy.context.scene.camera_collection

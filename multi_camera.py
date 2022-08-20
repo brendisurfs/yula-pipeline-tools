@@ -1,8 +1,11 @@
 # this module attempts to mimic the houdini ROP network,
 # with the ability to output multiple cameras sequentially,
 # named in an organized manner.
+from typing import Any
 import bpy
 from enum import Enum
+
+from bpy.types import Object
 from print_console import print
 
 
@@ -19,7 +22,7 @@ Log - utility class to keep logs consistent.
 
 
 class Log:
-    def __init__(self, log_type: LogType, value) -> None:
+    def __init__(self, log_type: LogType, value: Any) -> None:
         print({"type": log_type.value, "value": value})
 
 
@@ -47,6 +50,10 @@ class CameraHandler:
         self._render_path = bpy.path.abspath(path)
         print(Log(LogType.INFO, "camera path set to " + self._render_path))
 
+    def __get_camera_collection__(self):
+        camera_collection = self.scene.collection.children["Cameras"].all_objects
+        return camera_collection
+
     def get_camera_names(self):
         # cameras
         cams = bpy.data.cameras
@@ -54,15 +61,56 @@ class CameraHandler:
         for name in cam_names:
             print(Log(LogType.INFO, name))
 
-    def render_preview_pixel(self):
+    def __format_camera_name__(self, obj: Object):
+        format_splitter = "_"
+        split_name = [char for char in obj.name.strip(" ").split(" ")]
+        formatted_name = format_splitter.join(split_name)
+        return formatted_name
 
-        print("not implemented")
+    def render_preview_pixel(self):
+        camera_collection = self.__get_camera_collection__()
+
+        for obj in camera_collection:
+            formatted_name = self.__format_camera_name__(obj)
+
+            if self._render_path is not None:
+                # if subdir not found,
+                # make subdir
+                # else, use that subdir.
+
+                render_subdir = (
+                    self._render_path.rstrip("/")
+                    + ("/")
+                    + "Previews"
+                    + ("/")
+                    + formatted_name
+                    + ("/")
+                )
+                print(render_subdir)
 
     def render_final_pixel(self):
-        cam_ops = bpy.ops
-        ctx = bpy.context
+        camera_collection = self.__get_camera_collection__()
+
+        for obj in camera_collection:
+            formatted_name = self.__format_camera_name__(obj)
+
+            if self._render_path is not None:
+                # if subdir not found,
+                # make subdir
+                # else, use that subdir.
+
+                render_subdir = (
+                    self._render_path.rstrip("/")
+                    + ("/")
+                    + "Finals"
+                    + ("/")
+                    + formatted_name
+                    + ("/")
+                )
+                print(render_subdir)
 
 
 handler = CameraHandler()
 handler.set_camera_path("../../renders")
+handler.get_camera_names()
 handler.render_final_pixel()
