@@ -5,18 +5,17 @@ import bpy
 from enum import Enum
 from print_console import print
 
-# get scene for top ref
-scene = bpy.context.scene
-
-# cameras
-cams = bpy.data.cameras
-
 
 class LogType(Enum):
     INFO = "INFO"
     WARN = "WARN"
     ERR = "ERR"
     OK = "OK"
+
+
+"""
+Log - utility class to keep logs consistent.
+"""
 
 
 class Log:
@@ -26,6 +25,9 @@ class Log:
 
 class CameraHandler:
     def __init__(self) -> None:
+        # get scene for top ref
+        scene = bpy.context.scene
+        self.scene = scene
         pass
 
     """
@@ -46,11 +48,14 @@ class CameraHandler:
         print(Log(LogType.INFO, "camera path set to " + self._render_path))
 
     def get_camera_names(self):
+        # cameras
+        cams = bpy.data.cameras
         cam_names = [cam.name for cam in cams]
         for name in cam_names:
             print(Log(LogType.INFO, name))
 
     def render_preview_pixel(self):
+
         print("not implemented")
 
     def render_final_pixel(self):
