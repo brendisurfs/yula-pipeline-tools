@@ -3,6 +3,7 @@
 # named in an organized manner.
 from typing import Any
 import bpy
+import os
 from enum import Enum
 
 from bpy.types import Object
@@ -26,7 +27,7 @@ class Log:
         print({"type": log_type.value, "value": value})
 
 
-class CameraHandler:
+class SCENE_OT_CameraHandler(bpy.types.Operator):
     def __init__(self) -> None:
         # get scene for top ref
         scene = bpy.context.scene
@@ -48,7 +49,7 @@ class CameraHandler:
     def set_camera_path(self, path: str):
         # set the path for all the camera outputs.
         self.__render_path__ = bpy.path.abspath(path)
-        print(Log(LogType.INFO, "camera path set to " + self.__render_path__))
+        Log(LogType.INFO, "camera path set to " + self.__render_path__)
 
     def __get_camera_collection__(self):
         camera_collection = self.scene.collection.children["Cameras"].all_objects
@@ -59,7 +60,7 @@ class CameraHandler:
         cams = bpy.data.cameras
         cam_names = [cam.name for cam in cams]
         for name in cam_names:
-            print(Log(LogType.INFO, name))
+            Log(LogType.INFO, name)
 
     def __format_camera_name__(self, obj: Object):
         format_splitter = "_"
@@ -70,29 +71,8 @@ class CameraHandler:
     def render_preview_pixel(self):
         camera_collection = self.__get_camera_collection__()
 
-        for obj in camera_collection:
-            formatted_name = self.__format_camera_name__(obj)
-
-            if self.__render_path__ is not None:
-                # if subdir not found,
-                # make subdir
-                # else, use that subdir.
-
-                render_subdir = (
-                    self.__render_path__.rstrip("/")
-                    + ("/")
-                    + "Previews"
-                    + ("/")
-                    + formatted_name
-                    + ("/")
-                )
-                print(render_subdir)
-
-    def render_final_pixel(self):
-        camera_collection = self.__get_camera_collection__()
-
-        for obj in camera_collection:
-            formatted_name = self.__format_camera_name__(obj)
+        for cam in camera_collection:
+            formatted_name = self.__format_camera_name__(cam)
 
             if self.__render_path__ is not None:
                 # if subdir not found,
@@ -107,10 +87,43 @@ class CameraHandler:
                     + formatted_name
                     + ("/")
                 )
-                print(render_subdir)
+                # render each frame
+                self.scene.camera = cam
+                self.scene.render.filepath = render_subdir
+                print("filepath: ", self.scene.render.filepath)
+                # set + use preview settings before rendering
+                # bpy.ops.render.render()
+
+    def render_final_pixel(self):
+        camera_collection = self.__get_camera_collection__()
+
+        for cam in camera_collection:
+            formatted_name = self.__format_camera_name__(cam)
+
+            if self.__render_path__ is not None:
+                # if subdir not found,
+                # make subdir
+                # else, use that subdir.
+
+                render_subdir = (
+                    self.__render_path__.rstrip("/")
+                    + ("/")
+                    + "Finals"
+                    + ("/")
+                    + formatted_name
+                    + ("/")
+                )
+                # render each frame
+                self.scene.camera = cam
+                self.scene.render.filepath = render_subdir
+                print("filepath: ", self.scene.render.filepath)
+                # set + use final render settings before rendering
+                # bpy.ops.render.render()
+            else:
+                return
 
 
-handler = CameraHandler()
-handler.set_camera_path("../../renders")
-handler.get_camera_names()
-handler.render_final_pixel()
+# handler = CameraHandler()
+# handler.set_camera_path("../../renders")
+# handler.get_camera_names()
+# handler.render_final_pixel()
