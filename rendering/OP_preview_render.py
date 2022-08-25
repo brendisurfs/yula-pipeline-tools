@@ -1,6 +1,5 @@
-from typing import ContextManager
 import bpy
-from bpy.types import Context, Event, OperatorOptions
+from bpy.types import Context
 
 # custom print script on load
 from print_console import print
@@ -46,6 +45,11 @@ class YULA_OT_YTrender(bpy.types.Operator):
         context.scene.render.filepath = "/tmp/"
         pass
 
+    def send_to_email(self, context: Context):
+        """Sends an email after the render is done"""
+        if context.scene.yrt_tool.send_email:
+            print("sending email")
+
     def execute(self, context: Context):
         render_settings = context.scene.render
 
@@ -60,16 +64,5 @@ class YULA_OT_YTrender(bpy.types.Operator):
                 render_settings.resolution_x, render_settings.resolution_y
             )
         )
+        print(context.scene.yrt_tool.my_bool)
         return {"FINISHED"}
-
-
-def register():
-    bpy.utils.register_class(YULA_OT_YTrender)
-
-
-def unregister():
-    bpy.utils.unregister_class(YULA_OT_YTrender)
-
-
-if __name__ == "__main__":
-    register()
