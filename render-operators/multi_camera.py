@@ -27,7 +27,7 @@ class Log:
         print({"type": log_type.value, "value": value})
 
 
-class SCENE_OT_CameraHandler(bpy.types.Operator):
+class SCENE_OT_CameraHandler:
     def __init__(self) -> None:
         # get scene for top ref
         scene = bpy.context.scene
@@ -71,6 +71,14 @@ class SCENE_OT_CameraHandler(bpy.types.Operator):
     def render_preview_pixel(self):
         camera_collection = self.__get_camera_collection__()
 
+        # important render params
+        self.scene.render.fps = 30
+        self.scene.render.resolution_x = 640
+        self.scene.render.resolution_y = 480
+
+        x_resolution = self.scene.render.resolution_x
+        y_resolution = self.scene.render.resolution_y
+
         for cam in camera_collection:
             formatted_name = self.__format_camera_name__(cam)
 
@@ -87,6 +95,10 @@ class SCENE_OT_CameraHandler(bpy.types.Operator):
                     + formatted_name
                     + ("/")
                 )
+                file_name = "{0}_{1}x{2}".format(
+                    formatted_name, str(x_resolution), str(y_resolution)
+                )
+                print(file_name)
                 # render each frame
                 self.scene.camera = cam
                 self.scene.render.filepath = render_subdir
@@ -97,6 +109,14 @@ class SCENE_OT_CameraHandler(bpy.types.Operator):
     def render_final_pixel(self):
         camera_collection = self.__get_camera_collection__()
 
+        # important render params
+        self.scene.render.fps = 30
+        self.scene.render.resolution_x = 1920
+        self.scene.render.resolution_y = 1080
+
+        x_resolution = self.scene.render.resolution_x
+        y_resolution = self.scene.render.resolution_y
+
         for cam in camera_collection:
             formatted_name = self.__format_camera_name__(cam)
 
@@ -113,9 +133,15 @@ class SCENE_OT_CameraHandler(bpy.types.Operator):
                     + formatted_name
                     + ("/")
                 )
+
+                file_name = "{0}_{1}x{2}".format(
+                    formatted_name, str(x_resolution), str(y_resolution)
+                )
+                print(file_name)
                 # render each frame
                 self.scene.camera = cam
                 self.scene.render.filepath = render_subdir
+
                 print("filepath: ", self.scene.render.filepath)
                 # set + use final render settings before rendering
                 # bpy.ops.render.render()
@@ -123,7 +149,7 @@ class SCENE_OT_CameraHandler(bpy.types.Operator):
                 return
 
 
-# handler = CameraHandler()
-# handler.set_camera_path("../../renders")
-# handler.get_camera_names()
-# handler.render_final_pixel()
+handler = SCENE_OT_CameraHandler()
+handler.set_camera_path("../../renders")
+handler.get_camera_names()
+handler.render_preview_pixel()
