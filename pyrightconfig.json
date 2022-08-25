@@ -1,3 +1,4 @@
 {
-	"reportGeneralTypeIssues": "warning"
+	"reportGeneralTypeIssues": "warning",
+	"reportDuplicateImport": "warning"
 }
