@@ -16,12 +16,17 @@ class YULA_OT_YTrender(bpy.types.Operator):
     def poll(cls, context: Context):
         return context.area.type == "VIEW_3D"
 
+    def set_path(self, context: Context):
+        context.scene.render.filepath = "/tmp/"
+        pass
+
     def execute(self, context: Context):
-        scene = context.scene
-        render_settings = scene.render
+        render_settings = context.scene.render
+
         render_settings.fps = 30
         render_settings.resolution_x = 640
         render_settings.resolution_y = 480
+
         print("rendering!")
         return {"FINISHED"}
 
