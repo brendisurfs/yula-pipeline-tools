@@ -11,6 +11,10 @@ class VIEW_3D_PT_yrt_panel(bpy.types.Panel):
     bl_label: str = "Render"
 
     def draw(self, context: Context):
+        # add render buttons
+        self.layout.operator(
+            "yrt.render_preview", text="Render Preview", icon="RENDER_ANIMATION"
+        )
         pass
 
 

@@ -7,7 +7,10 @@ from print_console import print
 
 
 class YULA_OT_YTrender(bpy.types.Operator):
-    """Tooltip here"""
+    """
+    Renders out a final frame preview animation for the given scene.
+    This will render every camera in the selected camera collection.
+    """
 
     bl_idname: str = "yrt.render_preview"
     bl_label: str = "Set Preview Render"
